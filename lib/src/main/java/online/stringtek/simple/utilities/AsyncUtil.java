@@ -17,31 +17,20 @@ public class AsyncUtil {
         asyncBlockingDoCore(callableList);
     }
 
-    @SuppressWarnings("unchecked")
-    @SafeVarargs
-    public static <T> List<T> asyncBlockingDo(Class<T> clazz, Callable<T>... callableGroup) {
-        return (List<T>) asyncBlockingDo(callableGroup);
-    }
-
-    @SuppressWarnings("unchecked")
-    public static <T> List<T> asyncBlockingDo(Class<T> clazz, Collection<Callable<?>> callableGroup) {
-        return (List<T>) asyncBlockingDoCore(callableGroup);
-    }
-
-    public static List<?> asyncBlockingDo(Callable<?>... callableGroup) {
+    public static List<Pair<?, Exception>> asyncBlockingDo(Callable<?>... callableGroup) {
         return asyncBlockingDoCore(Arrays.asList(callableGroup));
     }
 
-    public static List<?> asyncBlockingDo(Collection<Callable<?>> callableGroup) {
+    public static List<Pair<?, Exception>> asyncBlockingDo(Collection<Callable<?>> callableGroup) {
         return asyncBlockingDoCore(callableGroup);
     }
 
     private static void asyncNonBlockingDoCore(Collection<FutureTask<?>> futureTaskGroup) {
-        ThreadPoolExecutor threadPool = newFixedThreadPoolExecutorWithoutBlockingQueue(
+        ExecutorService threadPool = newFixedThreadPoolExecutorWithoutBlockingQueue(
             futureTaskGroup.size());
         try {
             for (FutureTask<?> futureTask : futureTaskGroup) {
-                threadPool.execute(futureTask);
+                threadPool.submit(futureTask);
             }
         } finally {
             threadPool.shutdownNow();
@@ -53,7 +42,7 @@ public class AsyncUtil {
         Collection<Callable<?>> callableGroup) {
         List<Pair<?, Exception>> result = new ArrayList<>();
         List<Future<?>> futureList = new ArrayList<>();
-        ThreadPoolExecutor threadPool = newFixedThreadPoolExecutorWithoutBlockingQueue(
+        ExecutorService threadPool = newFixedThreadPoolExecutorWithoutBlockingQueue(
             callableGroup.size());
         try {
             for (Callable<?> callable : callableGroup) {
@@ -73,11 +62,9 @@ public class AsyncUtil {
         }
     }
 
-    private static ThreadPoolExecutor newFixedThreadPoolExecutorWithoutBlockingQueue(int size) {
+    private static ExecutorService newFixedThreadPoolExecutorWithoutBlockingQueue(int size) {
         return new ThreadPoolExecutor(size, size, 0, TimeUnit.SECONDS, new SynchronousQueue<>(),
             new ThreadPoolExecutor.CallerRunsPolicy());
     }
 
-    public static void main(String[] args) {
-    }
 }
