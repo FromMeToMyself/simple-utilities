@@ -1,6 +1,5 @@
-package onelie.stringtek;
+package online.stringtek.simple.utilities;
 
-import com.google.common.collect.ImmutableList;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;

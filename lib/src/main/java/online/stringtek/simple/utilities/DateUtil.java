@@ -1,4 +1,4 @@
-package onelie.stringtek;
+package online.stringtek.simple.utilities;
 
 import java.time.*;
 
